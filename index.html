@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Наши дорогие | Семейное тепло</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #fdf8ed 0%, #f4e5c7 50%, #ecd9b4 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Georgia', 'Times New Roman', serif;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* тёплые золотистые размытые пятна */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 70vw;
+            height: 70vw;
+            background: radial-gradient(circle, rgba(255,215,150,0.4) 0%, transparent 70%);
+            top: -30vh;
+            left: -20vw;
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(70px);
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(210,150,75,0.25) 0%, transparent 70%);
+            bottom: -20vh;
+            right: -20vw;
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(80px);
+        }
+
+        .love-card {
+            max-width: 580px;
+            width: 100%;
+            background: rgba(255, 252, 240, 0.88);
+            backdrop-filter: blur(8px);
+            border-radius: 72px;
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(210, 160, 75, 0.4);
+            overflow: hidden;
+            transition: 0.3s;
+            padding: 32px 28px 40px;
+            text-align: center;
+            border: 1px solid rgba(210, 160, 75, 0.5);
+        }
+
+        /* винтажный орнамент */
+        .decor-line {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .decor-line span {
+            font-size: 20px;
+            letter-spacing: 8px;
+            color: #c28a3e;
+            opacity: 0.7;
+        }
+
+        .greeting {
+            color: #8b5a2b;
+            font-weight: 500;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            text-shadow: 0 1px 2px rgba(255,245,200,0.8);
+        }
+
+        .greeting span {
+            display: inline-block;
+            background: linear-gradient(115deg, #e8bc7e, #d99e4c);
+            padding: 8px 28px;
+            border-radius: 80px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #2d2418;
+            box-shadow: 0 6px 14px rgba(160, 100, 30, 0.25);
+        }
+
+        .start-btn {
+            background: linear-gradient(105deg, #e8b15c, #c98332);
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            border-radius: 80px;
+            color: #2c1b0c;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 15px 0 20px;
+            font-family: inherit;
+            width: 85%;
+            letter-spacing: 2px;
+            text-shadow: 0 1px 0 rgba(255,255,200,0.5);
+        }
+
+        .start-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+        }
+
+        .heart-content {
+            display: none;
+        }
+
+        .heart-content.active {
+            display: block;
+            animation: softAppear 0.9s ease forwards;
+        }
+
+        @keyframes softAppear {
+            0% { opacity: 0; transform: translateY(25px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* рамка фото — золотая, тёплая */
+        .photo-frame {
+            margin: 15px 0 20px;
+            border-radius: 56px;
+            background: linear-gradient(125deg, #f3d9a4, #daa858);
+            padding: 6px;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255,240,180,0.5);
+        }
+
+        .photo-frame img {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+            border-radius: 52px;
+            display: block;
+            background: #ecd9b4;
+        }
+
+        /* индикаторы — нежные точечки */
+        .photo-counter {
+            margin: 16px 0 12px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .photo-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 10px;
+            background: rgba(160, 110, 50, 0.35);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .photo-dot.active {
+            background: #c98332;
+            width: 30px;
+            box-shadow: 0 0 8px #f3bc6e;
+        }
+
+        .music-player {
+            background: rgba(250, 240, 220, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 80px;
+            padding: 10px 20px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            border: 1px solid #e5bc84;
+        }
+
+        .track-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #6b3f1c;
+            font-weight: 500;
+        }
+
+        .track-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(210, 150, 70, 0.25);
+            padding: 5px 16px;
+            border-radius: 40px;
+            color: #4f2d10;
+        }
+
+        .play-pause {
+            background: #dc9e53;
+            border: none;
+            color: #2f1f0e;
+            font-size: 1.2rem;
+            padding: 8px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-family: inherit;
+        }
+
+        .play-pause:active {
+            transform: scale(0.94);
+        }
+
+        .tiny-note {
+            margin-top: 28px;
+            font-size: 13px;
+            color: #a5723e;
+            opacity: 0.85;
+            letter-spacing: 1px;
+            font-style: italic;
+            background: rgba(230, 195, 130, 0.3);
+            display: inline-block;
+            padding: 5px 24px;
+            border-radius: 60px;
+        }
+
+        button {
+            background: none;
+            border: none;
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            height: 440px;
+            background: linear-gradient(125deg, #ecd9b4, #e5bc84);
+            border-radius: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8b5a2b;
+            font-size: 18px;
+            text-align: center;
+            padding: 20px;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .photo-placeholder span {
+            font-size: 60px;
+            opacity: 0.8;
+        }
+
+        @keyframes gentleZoom {
+            0% { transform: scale(1.02); opacity: 0.85; filter: brightness(1.02); }
+            100% { transform: scale(1); opacity: 1; filter: brightness(1); }
+        }
+
+        .fade-img {
+            animation: gentleZoom 0.5s ease-out;
+        }
+
+        .heart-floating {
+            margin-top: 8px;
+            font-size: 18px;
+            letter-spacing: 5px;
+            color: #c28a3e;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="love-card">
+    <div class="decor-line">
+        <span>☀ ☀ ☀</span>
+    </div>
+    <div class="greeting">
+        <span>🌼 Смотреть только в двоём 🌼</span>
+    </div>
+
+    <button class="start-btn" id="startButton">💛 Нажмите на кнопочку 💛</button>
+
+    <div id="magicContent" class="heart-content">
+        <div class="photo-frame" id="ourPhotoFrame">
+            <div id="photoContainer"></div>
+        </div>
+        <div class="photo-counter" id="photoCounter"></div>
+        <div class="heart-floating">🧡 🧡</div>
+
+        <div class="music-player">
+            <div class="track-info">
+                <span>🎵</span>
+                <div class="track-name">Роман Дудчик — Сваты. Ностальгия</div>
+            </div>
+            <button class="play-pause" id="playPauseBtn">▶️ Слушать</button>
+        </div>
+        <div class="tiny-note">
+            🌾 каждой фотографией мы говорим вам спасибо 🌾
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ========== ОСНОВНЫЕ ФОТОГРАФИИ (10 штук) ==========
+        const BASE_PHOTOS = [
+            "4c6749f9-78bb-4a41-8fda-6896ab5e7703.jpg",
+            "8f05ef94-2ed1-4c2d-893c-b6654c199e62.jpg",
+            "9d65f6b3-f117-45f1-9435-5874e8969bcc.jpg",
+            "31e0fa90-237e-4cb5-8101-aabd0bd666eb.jpg",
+            "59ddb160-7ea4-4f05-8968-4361f217b83a.jpg",
+            "643bc85a-30d6-45f7-bf84-2ab048651ee4.jpg",
+            "036036ae-faa3-4383-b8a8-4e139b887c51.jpg",
+            "a4f6e01d-1a1c-4a77-9782-bf7700d04013.jpg",
+            "a62dc681-d640-48ad-a40d-d1124ae1d9ea.jpg",
+            "af9e3efd-a490-4507-b2ac-5178fdabc307.jpg"
+        ];
+        
+        // ========== КАЖДОЕ ФОТО ПОВТОРЕНО 2 РАЗА ==========
+        // Сначала идут все фото по порядку, потом снова все фото по порядку
+        const PHOTOS_LIST = [...BASE_PHOTOS, ...BASE_PHOTOS];
+        
+        // ПЕСНЯ: Сваты — Ностальгия
+        const YOUR_MP3_URL = "Roman_Dudchik_serialy_saundtrek_-_Svaty_Nostalgiya_74023605.mp3";
+        
+        let currentPhotoIndex = 0;
+        let slideshowInterval = null;
+        let isPlayingSlideshow = false;
+        
+        const photoContainer = document.getElementById('photoContainer');
+        const counterContainer = document.getElementById('photoCounter');
+        
+        // Создание точек-индикаторов (20 точек — по числу повторённых фото)
+        function createDots() {
+            counterContainer.innerHTML = '';
+            PHOTOS_LIST.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('photo-dot');
+                if (index === currentPhotoIndex) dot.classList.add('active');
+                dot.addEventListener('click', () => {
+                    if (isPlayingSlideshow) {
+                        showPhotoByIndex(index);
+                        resetSlideshowTimer();
+                    } else {
+                        showPhotoByIndex(index);
+                    }
+                });
+                counterContainer.appendChild(dot);
+            });
+        }
+        
+        function updateActiveDot(index) {
+            const dots = document.querySelectorAll('.photo-dot');
+            dots.forEach((dot, i) => {
+                if (i === index) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+        }
+        
+        function showPhotoByIndex(index) {
+            if (index < 0 || index >= PHOTOS_LIST.length) return;
+            const imgUrl = PHOTOS_LIST[index];
+            const img = new Image();
+            img.style.width = '100%';
+            img.style.borderRadius = '52px';
+            img.style.display = 'block';
+            img.style.cursor = 'pointer';
+            img.classList.add('fade-img');
+            
+            img.onload = () => {
+                photoContainer.innerHTML = '';
+                photoContainer.appendChild(img);
+                img.addEventListener('click', () => window.open(imgUrl, '_blank'));
+                // Определяем, какой по счёту показ (первый круг или второй)
+                const circleNum = index < BASE_PHOTOS.length ? 1 : 2;
+                const photoNum = (index % BASE_PHOTOS.length) + 1;
+                console.log(`✅ Фото ${photoNum} (круг ${circleNum}) загружено`);
+            };
+            img.onerror = () => {
+                photoContainer.innerHTML = `<div class="photo-placeholder"><span>📷</span><p>Фото не найдено</p><p style="font-size:12px;">${imgUrl}</p></div>`;
+                console.error(`❌ Ошибка: ${imgUrl}`);
+            };
+            img.src = imgUrl;
+            currentPhotoIndex = index;
+            updateActiveDot(currentPhotoIndex);
+        }
+        
+        function nextPhoto() {
+            let nextIndex = currentPhotoIndex + 1;
+            if (nextIndex >= PHOTOS_LIST.length) nextIndex = 0;
+            showPhotoByIndex(nextIndex);
+        }
+        
+        // ЗАПУСК СЛАЙД-ШОУ — СМЕНА КАЖДЫЕ 4 СЕКУНДЫ
+        function startSlideshow() {
+            if (slideshowInterval) clearInterval(slideshowInterval);
+            isPlayingSlideshow = true;
+            slideshowInterval = setInterval(() => nextPhoto(), 4000);
+            console.log("🖼️ Слайд-шоу (каждое фото повторяется 2 раза, смена каждые 4 сек)");
+            console.log(`📸 Всего фото в показе: ${PHOTOS_LIST.length} (10 фото × 2 круга)`);
+        }
+        
+        function resetSlideshowTimer() {
+            if (slideshowInterval) {
+                clearInterval(slideshowInterval);
+                slideshowInterval = setInterval(() => nextPhoto(), 4000);
+            }
+        }
+        
+        // МУЗЫКА
+        let audio = new Audio();
+        let isPlayingMusic = false;
+        
+        function initMusic(url) {
+            audio.src = url;
+            audio.preload = "auto";
+            audio.loop = true;
+            audio.load();
+            console.log("🎵 Трек: Сваты - Ностальгия");
+        }
+        
+        function startMusic() {
+            audio.play().then(() => {
+                isPlayingMusic = true;
+                playBtn.innerHTML = "⏸️ Пауза";
+            }).catch(e => console.log("авто-музыка:", e));
+        }
+        
+        function togglePlayMusic() {
+            if (isPlayingMusic) {
+                audio.pause();
+                playBtn.innerHTML = "▶️ Слушать";
+                isPlayingMusic = false;
+            } else {
+                audio.play().catch(e => {});
+                playBtn.innerHTML = "⏸️ Пауза";
+                isPlayingMusic = true;
+            }
+        }
+        
+        initMusic(YOUR_MP3_URL);
+        const playBtn = document.getElementById('playPauseBtn');
+        playBtn.addEventListener('click', togglePlayMusic);
+        
+        audio.addEventListener('play', () => {
+            isPlayingMusic = true;
+            playBtn.innerHTML = "⏸️ Пауза";
+        });
+        audio.addEventListener('pause', () => {
+            isPlayingMusic = false;
+            playBtn.innerHTML = "▶️ Слушать";
+        });
+        
+        const startBtn = document.getElementById('startButton');
+        const contentBlock = document.getElementById('magicContent');
+        
+        startBtn.addEventListener('click', () => {
+            if (!contentBlock.classList.contains('active')) {
+                contentBlock.classList.add('active');
+                startBtn.style.opacity = '0.85';
+                startBtn.disabled = true;
+                startBtn.innerText = '✨ Приятного просмотра ✨';
+                
+                createDots();
+                showPhotoByIndex(0);
+                startSlideshow();
+                startMusic();
+            }
+        });
+        
+        window.addEventListener('beforeunload', () => {
+            if (slideshowInterval) clearInterval(slideshowInterval);
+        });
+        
+        console.log("✅ Сайт для бабушки и дедушки готов!");
+        console.log(`📸 Всего уникальных фото: ${BASE_PHOTOS.length}, повторено 2 раза = ${PHOTOS_LIST.length} кадров`);
+        console.log("🎶 Песня: Роман Дудчик — Сваты. Ностальгия");
+    })();
+</script>
+</body>
+</html>
